@@ -8,7 +8,7 @@ import {
 	ViewUpdate,
 	WidgetType,
 } from "@codemirror/view";
-import { isResetHeading } from "./core";
+import { isResetHeading, markerRegex } from "./core";
 import { resetSection } from "./reset-service";
 import { createRefreshButton } from "./button";
 
@@ -34,7 +34,7 @@ class RefreshWidget extends WidgetType {
 	}
 
 	ignoreEvent(): boolean {
-		return false;
+		return true;
 	}
 }
 
@@ -51,19 +51,35 @@ export function livePreviewExtension(
 			}
 
 			update(u: ViewUpdate) {
-				if (u.docChanged || u.viewportChanged) {
+				if (u.docChanged || u.viewportChanged || u.selectionSet) {
 					this.decorations = this.build(u.view);
 				}
 			}
 
 			build(view: EditorView): DecorationSet {
 				const token = getToken();
+				const sel = view.state.selection.main;
 				const builder = new RangeSetBuilder<Decoration>();
 				for (const { from, to } of view.visibleRanges) {
 					let pos = from;
 					while (pos <= to) {
 						const line = view.state.doc.lineAt(pos);
 						if (isResetHeading(line.text, token)) {
+							const cursorOnLine = sel.from <= line.to && sel.to >= line.from;
+							if (!cursorOnLine) {
+								const match = markerRegex(token).exec(line.text);
+								if (match) {
+									const hasLeadingSpace = match.index > 0 &&
+										line.text[match.index - 1] === " ";
+									const markerFrom =
+										line.from + match.index - (hasLeadingSpace ? 1 : 0);
+									builder.add(
+										markerFrom,
+										line.from + match.index + match[0].length,
+										Decoration.replace({}),
+									);
+								}
+							}
 							builder.add(
 								line.to,
 								line.to,
