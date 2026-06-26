@@ -1,0 +1,26 @@
+.section-refresh-button {
+	display: inline-flex;
+	align-items: center;
+	/* Theme-agnostic: borrow the theme's spacing, palette and icon scale. */
+	--icon-size: var(--icon-s);
+	margin-left: var(--size-4-2);
+	color: var(--text-muted);
+	cursor: pointer;
+	opacity: 0.6;
+	vertical-align: middle;
+}
+
+.section-refresh-button:hover {
+	color: var(--text-accent);
+	opacity: 1;
+}
+
+/* Push the reading-mode button to the far right of the heading. */
+h1 .section-refresh-button,
+h2 .section-refresh-button,
+h3 .section-refresh-button,
+h4 .section-refresh-button,
+h5 .section-refresh-button,
+h6 .section-refresh-button {
+	float: right;
+}

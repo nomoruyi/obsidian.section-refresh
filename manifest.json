@@ -1,0 +1,9 @@
+{
+	"id": "section-refresh",
+	"name": "Section Refresh",
+	"version": "0.1.0",
+	"minAppVersion": "1.5.0",
+	"description": "A one-click refresh button on opt-in headings that resets every checkbox in that section.",
+	"author": "nomoruyi",
+	"isDesktopOnly": false
+}
